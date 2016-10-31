@@ -4,8 +4,8 @@ import os, sys
 import pygame
 from pygame.locals import *
 
-SCREEN_WIDTH = 400
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 480
+SCREEN_HEIGHT = 700
 
 #Bullet Class
 class Bullet(pygame.sprite.Sprite):

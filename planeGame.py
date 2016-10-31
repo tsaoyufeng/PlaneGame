@@ -9,8 +9,8 @@ import random
 if not pygame.font: print 'Warning, fonts disabled'
 if not pygame.mixer: print 'Warning, sound disabled'
 
-SCREEN_WIDTH = 400
-SCREEN_HEIGHT = 600
+#SCREEN_WIDTH = 480
+#SCREEN_HEIGHT = 700
 
 #初始化游戏
 pygame.init()#initializes modules
@@ -44,12 +44,13 @@ pygame.mixer.music.set_volume(0.2)
 hero_rects = []
 hero_rects.append(pygame.Rect(0, 99, 102, 126)) #hero1
 hero_rects.append(pygame.Rect(165, 360, 102, 126)) #hreo2
+#玩家爆炸图片
 hero_rects.append(pygame.Rect(165, 234, 102, 126)) #hero_blowup_n1
 hero_rects.append(pygame.Rect(330, 624, 102, 126)) #hero_blowup_n2
 hero_rects.append(pygame.Rect(330, 498, 102, 126)) #hero_blowup_n3
 hero_rects.append(pygame.Rect(432, 624, 102, 126)) #hero_blowup_n4
 
-hero_pos = [149, 400] #设置玩家的初始位置
+hero_pos = [189, 500] #设置玩家的初始位置
 hero = Hero(shoot, hero_rects, hero_pos) #生成一个Hero对象
 
 #子弹图片(暂时只有一种子弹)
@@ -75,6 +76,10 @@ enemies_down = pygame.sprite.Group()
 
 shot_frequency = 0 #子弹发射频率
 enemy_frequency = 0 #敌机出现频率
+
+hero_down_index = 2 #用于索引玩家爆炸图片
+
+score = 0 #分数
 
 running = True
 while running:
@@ -118,8 +123,8 @@ while running:
 			enemies_down.add(enemy1) #加入敌机死亡组
 			enemies1.remove(enemy1) #从敌机组中移除
 			hero.is_hit = True
-			pygame.mixer.music.stop()
 			game_over_sound.play()
+			pygame.mixer.music.stop()
 			running = False
 			break
 		if enemy1.rect.top > SCREEN_HEIGHT:
@@ -129,6 +134,7 @@ while running:
 	collisions = pygame.sprite.groupcollide(enemies1, hero.bullets, 1, 1)
 	for enemy_down in collisions:
 		enemies_down.add(enemy_down)
+		score += 99
 
 
 	#绘制背景
@@ -138,11 +144,21 @@ while running:
 	#绘制玩家飞机
 	if not hero.is_hit:
 		screen.blit(hero.image[hero.img_index], hero.rect)
+		hero.img_index += 1
+		if hero.img_index >=2 :
+			hero.img_index = 0
+
 
 	#绘制子弹和敌机
 	hero.bullets.draw(screen)
 	enemies1.draw(screen)
 
+	#绘制得分
+	score_font = pygame.font.Font('data\\font\\CHILLER.TTF', 36)
+	score_text = score_font.render(str(score), True, (240, 0, 87)) #获得一个surface
+	score_text_rect = score_text.get_rect()
+	screen.blit(score_text,score_text_rect)
+	
 	#更新屏幕
 	pygame.display.update()
 
